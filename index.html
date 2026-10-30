@@ -3,19 +3,19 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap">
 <style>
-/* Layout: one full-height instrument. Slim title bar, a stage holding the polar plot (hue = angle, chroma = distance from centre), a readout strip underneath. White ground with black linework, so the data colours are the only colour on the page. */
+/* Layout: one full-height instrument. Warm paper, a Xanh Mono title, and small tracked labels, in the manner of an editorial studio site. The polar plot stays the only strong drawing. */
 :root {
-  --bg: #ffffff;
-  --ink: #000000;
-  --dim: #5a5a5a;
-  --faint: #bdbdbd;
-  --line: #000000;
-  --line-strong: #000000;
-  --panel: #f1f1f1;
-  --display: "Instrument Serif", Georgia, "Times New Roman", serif;
-  --mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  --bg: #fffcf7;
+  --ink: #212121;
+  --dim: #6e6e6e;
+  --faint: #d8d2c8;
+  --line: #e6e1d8;
+  --line-strong: #212121;
+  --panel: #f6f1e8;
+  --display: "Inter", system-ui, sans-serif;
+  --sans: "Inter", system-ui, sans-serif;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
@@ -24,70 +24,78 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 12px/1.4 var(--mono);
+  font: 15px/1.35 var(--display);
+  letter-spacing: -0.03em;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-block: 14px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  gap: 18px;
+  padding-block: 22px;
+  padding-left: max(22px, env(safe-area-inset-left, 0px));
+  padding-right: max(22px, env(safe-area-inset-right, 0px));
 }
-.bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-h1 { margin: 0; font: 400 28px/1 var(--display); letter-spacing: 0.01em; text-wrap: balance; }
-.tools { display: flex; gap: 8px; flex-wrap: wrap; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 16px 28px; flex-wrap: wrap; }
+h1 { margin: 0; font: 400 11px/1 var(--sans); letter-spacing: 0.04em; text-wrap: balance; }
+.tools { display: flex; gap: 8px 22px; flex-wrap: wrap; align-items: center; }
 .btn {
-  font: 500 11px/1 var(--mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font: 400 11px/1 var(--sans);
+  letter-spacing: 0.04em;
   color: var(--ink);
-  background: transparent;
-  border: 1px solid var(--line-strong);
-  padding: 9px 12px;
-  border-radius: 2px;
+  background: none;
+  border: 0;
+  padding: 4px 0;
   cursor: pointer;
 }
-.btn:hover { background: var(--panel); border-color: var(--dim); }
-.btn:focus-visible, .btn:focus-within { outline: 2px solid var(--ink); outline-offset: 2px; }
+.btn::before { content: "/ "; }
+.btn:hover { color: #362a10; }
+.btn:focus-visible, .btn:focus-within { outline: 2px solid var(--ink); outline-offset: 3px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-.stage { position: relative; flex: 1; min-height: 0; touch-action: none; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stage { position: relative; flex: 1; min-height: 0; touch-action: none; }
 #trail, #ui { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #trail { transition: opacity 0.6s; }
 .idle #trail { opacity: 0.28; }
 
 .thumb {
-  position: absolute; right: 0; bottom: 10px;
-  display: grid; gap: 4px; justify-items: end;
-  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim);
+  position: absolute; right: 0; bottom: 8px;
+  display: grid; gap: 6px; justify-items: end;
+  font: 400 11px/1 var(--sans);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(43, 43, 43, 0.7);
   pointer-events: none;
 }
-.thumb canvas { width: 120px; height: 90px; border: 1px solid var(--line-strong); display: block; }
+.thumb canvas { width: 120px; height: 90px; border: 1px solid var(--line); display: block; }
 
 .begin {
   position: absolute; inset: 0;
-  display: grid; place-content: center; gap: 12px; text-align: center;
-  background: none; border: 0; color: var(--ink); cursor: pointer; padding: 16px;
+  display: grid; place-content: center; gap: 14px; text-align: center;
+  background: none; border: 0; color: var(--ink); cursor: pointer; padding: 20px;
   transition: opacity 0.5s, visibility 0s;
 }
-.begin span { font: 400 clamp(28px, 5.5vw, 44px)/1.15 var(--mono); text-wrap: balance; }
-.begin small { font: 400 12px/1.5 var(--mono); color: var(--dim); max-width: 36ch; margin-inline: auto; }
+.begin span { font: 400 clamp(22px, 4vw, 36px)/1.15 var(--display); letter-spacing: -0.04em; text-wrap: balance; }
+.begin small { font: 400 16px/1.35 var(--display); letter-spacing: -0.03em; color: var(--ink); max-width: 34ch; margin-inline: auto; }
 .begin:focus-visible { outline: 2px solid var(--ink); outline-offset: -6px; }
 .stage:not(.idle) .begin { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.5s, visibility 0s 0.5s; }
 
-.read { display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: end; justify-content: space-between; }
-.read dl { display: flex; flex-wrap: wrap; gap: 8px 28px; margin: 0; min-width: 0; }
-.read dl div { display: grid; gap: 3px; min-width: 0; }
-dt { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
-dd { margin: 0; font-size: 15px; font-variant-numeric: tabular-nums; min-width: 5ch; }
-dd.wide { min-width: 16ch; }
-.swatch { display: inline-block; width: 0.7em; height: 0.7em; border-radius: 50%; margin-right: 7px; background: var(--sw, transparent); }
-.trailctl { display: flex; align-items: center; gap: 10px; color: var(--dim); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+.read { display: flex; flex-wrap: wrap; gap: 14px 32px; align-items: end; justify-content: space-between; }
+.read dl { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 0; min-width: 0; }
+.read dl div { display: grid; gap: 6px; min-width: 0; }
+dt { font: 400 11px/1 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: rgba(43, 43, 43, 0.7); }
+dd { margin: 0; font: 400 11px/1.2 var(--display); letter-spacing: -0.03em; min-width: 5ch; }
+dd.wide { min-width: 14ch; }
+.swatch { display: inline-block; width: 0.65em; height: 0.65em; border-radius: 50%; margin-right: 7px; background: var(--sw, transparent); vertical-align: -0.05em; }
+.trailctl { display: flex; align-items: center; gap: 10px; color: rgba(43, 43, 43, 0.7); font: 400 11px/1 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; }
 input[type="range"] { accent-color: var(--ink); width: 110px; }
-#note { margin: 0; color: var(--dim); min-height: 1.4em; }
+#note { margin: 0; color: var(--dim); min-height: 1.35em; font: 400 15px/1.35 var(--display); letter-spacing: -0.03em; }
 
-@media (max-width: 520px) {
+@media (max-width: 700px) {
+  body { gap: 12px; padding-block: 14px; }
   .thumb canvas { width: 84px; height: 63px; }
-  h1 { font-size: 24px; }
+  .begin { gap: 8px; }
+  .begin span { font-size: 18px; }
+  .begin small { font-size: 13px; }
+  dd.wide { min-width: 12ch; }
+  #note { font-size: 13px; }
 }
 </style>
 
@@ -107,7 +115,7 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
   <div class="thumb"><canvas id="src" width="96" height="72"></canvas><span>Source</span></div>
   <button class="begin" id="begin" type="button">
     <span>Click anywhere to begin</span>
-    <small>Every pixel becomes a dot. Angle is hue, distance from the centre is chroma. The colours play as a chord, and you can play a note by moving over the plot.</small>
+    <small>take a breath. drag the dot around and create your heaven. audio reacting to visual. mind reacting to the sound. that's all for now</small>
   </button>
 </main>
 
@@ -270,7 +278,8 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
       g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); g.stroke();
     }
     g.globalAlpha = 1;
-    g.font = '10px "DM Mono", ui-monospace, Menlo, monospace';
+    const fs = W < 700 ? 10 : 11;
+    g.font = fs + 'px Inter, system-ui, sans-serif';
     g.fillStyle = DIM;
     g.textBaseline = 'middle';
     g.textAlign = 'center';
@@ -393,8 +402,20 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
     const lows = [];
     const subs = [];
     const accW = new Float32Array(12);
+    const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
     let accN = 0, accL = 0, accE = 0, lastChord = -99;
     let on = true, active = false;
+    /* iOS keeps a new context suspended, and the silent switch mutes Web Audio unless the session is playback. */
+    function session() {
+      try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    }
+    function poke() {
+      const buf = ctx.createBuffer(1, 1, ctx.sampleRate);
+      const s = ctx.createBufferSource();
+      s.buffer = buf;
+      s.connect(ctx.destination);
+      s.start(0);
+    }
     function impulse(c, secs, decay) {
       const len = Math.floor(c.sampleRate * secs), buf = c.createBuffer(2, len, c.sampleRate);
       for (let ch = 0; ch < 2; ch++) {
@@ -409,12 +430,23 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
       return a;
     }
     function ensure() {
-      if (ctx) { if (ctx.state === 'suspended') ctx.resume().catch(() => {}); return true; }
+      session();
+      if (ctx) {
+        if (ctx.state !== 'running') { const p = ctx.resume(); if (p && p.catch) p.catch(() => {}); }
+        return true;
+      }
       const AC = window.AudioContext || window.webkitAudioContext;
       if (!AC) return false;
       ctx = new AC();
-      comp = ctx.createDynamicsCompressor(); comp.connect(ctx.destination);
-      master = ctx.createGain(); master.gain.value = 0; master.connect(comp);
+      const resumed = ctx.resume();
+      if (resumed && resumed.catch) resumed.catch(() => {});
+      poke();
+      comp = ctx.createDynamicsCompressor();
+      /* Phone speakers cannot play the sub octave, and that energy was clamping the compressor. */
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass'; hp.frequency.value = 70; hp.Q.value = 0.7;
+      hp.connect(comp); comp.connect(ctx.destination);
+      master = ctx.createGain(); master.gain.value = 0; master.connect(hp);
       /* organ spectrum: drawbar-style harmonics 1, 2, 3, 4, 5, 6, 8 */
       const re = new Float32Array(9), im = new Float32Array(9);
       [[2, 2], [2, 0.75], [3, 0.5], [4, 0.4], [5, 0.1], [6, 0.22], [8, 0.1]].forEach(([k, a]) => { im[k] = a; });
@@ -461,13 +493,13 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
     function apply() {
       if (!ctx) return;
       const t = ctx.currentTime, live = on && active;
-      master.gain.setTargetAtTime(live ? 0.8 : 0, t, 0.15);
+      master.gain.setTargetAtTime(live ? (coarse ? 1.25 : 0.8) : 0, t, coarse ? 0.05 : 0.15);
       if (!live) pg.gain.setTargetAtTime(0, t, 0.05);
     }
     return {
       isOn: () => on,
       state: () => (ctx ? ctx.state : 'none'),
-      nudge() { if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {}); },
+      nudge() { ensure(); },
       blip() {
         if (!ctx || !on) return;
         const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain();
@@ -488,11 +520,12 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
         if (t - lastChord < 4) return;
         lastChord = t;
         const loud = 0.35 + Math.min(1, accE / accN * 2) * 0.65;
+        const glide = coarse ? 0.35 : 1.4;
         for (let i = 0; i < 12; i++) {
           const level = Math.min(0.5, Math.sqrt(accW[i] / accN) * 0.14 * loud);
-          voices[i].gain.setTargetAtTime(level, t, 1.4);
-          lows[i].gain.setTargetAtTime(level * 0.9, t, 1.4);
-          subs[i].gain.setTargetAtTime(level * 0.6, t, 1.4);
+          voices[i].gain.setTargetAtTime(level, t, glide);
+          lows[i].gain.setTargetAtTime(level * 0.9, t, glide);
+          subs[i].gain.setTargetAtTime(level * 0.6, t, glide);
           accW[i] = 0;
         }
         lp.frequency.setTargetAtTime(500 + (accL / accN) * 4500, t, 1.4);
@@ -507,7 +540,7 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
         const hold = 1.2 + Math.random() * 1.2, rel = 0.45;
         const fl = ctx.createBiquadFilter(), g = ctx.createGain();
         fl.type = 'lowpass'; fl.frequency.value = 2400 + c * 3200; fl.Q.value = 0.5;
-        const peak = 0.06 + 0.1 * c;
+        const peak = (coarse ? 0.14 : 0.06) + 0.1 * c;
         g.gain.setValueAtTime(0, t);
         g.gain.linearRampToValueAtTime(peak, t + 0.014);
         g.gain.setValueAtTime(peak, t + hold);
@@ -556,6 +589,7 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
 
   /* ---------- controls ---------- */
   document.addEventListener('click', beginRun);
+  stage.addEventListener('pointerup', beginRun);
   $('tools').addEventListener('click', (e) => e.stopPropagation());
   pauseBtn.addEventListener('click', () => {
     if (raf) {
