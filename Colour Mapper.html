@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="icon" href="favicon.png" type="image/png"></head><body>
 <title>Colour Mapper</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,7 +69,7 @@ h1 { margin: 0; font: 400 28px/1 var(--display); letter-spacing: 0.01em; text-wr
   background: none; border: 0; color: var(--ink); cursor: pointer; padding: 16px;
   transition: opacity 0.5s, visibility 0s;
 }
-.begin span { font: italic 400 clamp(34px, 8vw, 64px)/1 var(--display); text-wrap: balance; }
+.begin span { font: 400 clamp(28px, 5.5vw, 44px)/1.15 var(--mono); text-wrap: balance; }
 .begin small { font: 400 12px/1.5 var(--mono); color: var(--dim); max-width: 36ch; margin-inline: auto; }
 .begin:focus-visible { outline: 2px solid var(--ink); outline-offset: -6px; }
 .stage:not(.idle) .begin { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.5s, visibility 0s 0.5s; }
@@ -382,14 +382,16 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
 
   /* ---------- sound ---------- */
   /* Twelve quiet voices, one per 30 degree sector of the hue wheel, tuned to a major pentatonic so any mix stays consonant.
-     Each voice is as loud as the share of the (exaggerated) chroma in its sector; lightness opens a low-pass filter.
-     Short plucks are fired from random dots, pitched by hue and register by lightness. A lead voice plays the hue under
-     the pointer. Everything runs through a soft-clip overdrive and a convolution reverb. */
+     Each voice is doubled an octave lower and again an octave below that. Each voice is as loud as the share of the (exaggerated) chroma in its sector; lightness opens a low-pass filter.
+     Short plucks are fired from random dots, pitched by hue and register by lightness, with two octaves under the root. Darker dots use the lower register.
+     A lead voice plays the hue under the pointer, with two octaves below it. Everything runs through a soft-clip overdrive and a convolution reverb. */
   const audio = (() => {
     const PENT = [0, 2, 4, 7, 9];
     const note = (i, base) => base * Math.pow(2, (Math.floor(i / 5) * 12 + PENT[i % 5]) / 12);
-    let ctx = null, comp = null, master = null, bus = null, lp = null, pv = null, pg = null, pf = null, organWave = null, lfoDepth = null;
+    let ctx = null, comp = null, master = null, bus = null, lp = null, pv = null, pvLow = null, pvSub = null, pg = null, pf = null, organWave = null, lfoDepth = null;
     const voices = [];
+    const lows = [];
+    const subs = [];
     const accW = new Float32Array(12);
     let accN = 0, accL = 0, accE = 0, lastChord = -99;
     let on = true, active = false;
@@ -438,11 +440,22 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
         const o = ctx.createOscillator(); o.setPeriodicWave(organWave); o.frequency.value = note(i, 261.63); lfoDepth.connect(o.detune);
         const g = ctx.createGain(); g.gain.value = 0;
         o.connect(g); g.connect(lp); o.start(); voices.push(g);
+        const lo = ctx.createOscillator(); lo.setPeriodicWave(organWave); lo.frequency.value = note(i, 130.81); lfoDepth.connect(lo.detune);
+        const lg = ctx.createGain(); lg.gain.value = 0;
+        lo.connect(lg); lg.connect(lp); lo.start(); lows.push(lg);
+        const su = ctx.createOscillator(); su.setPeriodicWave(organWave); su.frequency.value = note(i, 65.41); lfoDepth.connect(su.detune);
+        const sg = ctx.createGain(); sg.gain.value = 0;
+        su.connect(sg); sg.connect(lp); su.start(); subs.push(sg);
       }
       pv = ctx.createOscillator(); pv.setPeriodicWave(organWave); pv.frequency.value = 123.25; lfoDepth.connect(pv.detune);
+      pvLow = ctx.createOscillator(); pvLow.setPeriodicWave(organWave); pvLow.frequency.value = 61.625; lfoDepth.connect(pvLow.detune);
+      pvSub = ctx.createOscillator(); pvSub.setPeriodicWave(organWave); pvSub.frequency.value = 30.813; lfoDepth.connect(pvSub.detune);
+      const pvLowG = ctx.createGain(); pvLowG.gain.value = 0.85;
+      const pvSubG = ctx.createGain(); pvSubG.gain.value = 0.6;
       pf = ctx.createBiquadFilter(); pf.type = 'lowpass'; pf.frequency.value = 1200;
       pg = ctx.createGain(); pg.gain.value = 0;
-      pv.connect(pf); pf.connect(pg); pg.connect(bus); pv.start();
+      pv.connect(pf); pvLow.connect(pvLowG); pvLowG.connect(pf); pvSub.connect(pvSubG); pvSubG.connect(pf); pf.connect(pg); pg.connect(bus);
+      pv.start(); pvLow.start(); pvSub.start();
       return true;
     }
     function apply() {
@@ -476,7 +489,10 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
         lastChord = t;
         const loud = 0.35 + Math.min(1, accE / accN * 2) * 0.65;
         for (let i = 0; i < 12; i++) {
-          voices[i].gain.setTargetAtTime(Math.min(0.5, Math.sqrt(accW[i] / accN) * 0.14 * loud), t, 1.4);
+          const level = Math.min(0.5, Math.sqrt(accW[i] / accN) * 0.14 * loud);
+          voices[i].gain.setTargetAtTime(level, t, 1.4);
+          lows[i].gain.setTargetAtTime(level * 0.9, t, 1.4);
+          subs[i].gain.setTargetAtTime(level * 0.6, t, 1.4);
           accW[i] = 0;
         }
         lp.frequency.setTargetAtTime(500 + (accL / accN) * 4500, t, 1.4);
@@ -485,9 +501,9 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
       pluck(h, c, l) {
         if (!ctx || !on || !active) return;
         const t = ctx.currentTime;
-        const root = note(Math.min(9, Math.floor(h / 36)), l < 0.5 ? 130.81 : 261.63);
-        /* a held organ chord per dot: root, fifth, octave and a quiet octave-plus-fifth, with a short key-down attack and a release */
-        const stack = [[1, 1], [1.5, 0.55], [2, 0.5], [3, 0.18 + 0.12 * c]];
+        const root = note(Math.min(9, Math.floor(h / 36)), l < 0.72 ? 130.81 : 261.63);
+        /* a held organ chord per dot: two lower octaves, root, fifth, octave and a quiet octave-plus-fifth */
+        const stack = [[0.25, 0.6], [0.5, 0.85], [1, 1], [1.5, 0.55], [2, 0.5], [3, 0.18 + 0.12 * c]];
         const hold = 1.2 + Math.random() * 1.2, rel = 0.45;
         const fl = ctx.createBiquadFilter(), g = ctx.createGain();
         fl.type = 'lowpass'; fl.frequency.value = 2400 + c * 3200; fl.Q.value = 0.5;
@@ -512,7 +528,10 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
         if (!ctx || !on || !active) return;
         const t = ctx.currentTime;
         if (h == null) { pg.gain.setTargetAtTime(0, t, 0.08); return; }
-        pv.frequency.setTargetAtTime(note(Math.min(9, Math.floor(h / 36)), 523.25), t, 0.03);
+        const f = note(Math.min(9, Math.floor(h / 36)), 523.25);
+        pv.frequency.setTargetAtTime(f, t, 0.03);
+        pvLow.frequency.setTargetAtTime(f / 2, t, 0.03);
+        pvSub.frequency.setTargetAtTime(f / 4, t, 0.03);
         pf.frequency.setTargetAtTime(500 + c * 5500, t, 0.05);
         pg.gain.setTargetAtTime(0.08 + 0.3 * c, t, 0.05);
       }
