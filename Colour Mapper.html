@@ -415,7 +415,7 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
       master = ctx.createGain(); master.gain.value = 0; master.connect(comp);
       /* organ spectrum: drawbar-style harmonics 1, 2, 3, 4, 5, 6, 8 */
       const re = new Float32Array(9), im = new Float32Array(9);
-      [[1, 1], [2, 0.75], [3, 0.5], [4, 0.4], [5, 0.1], [6, 0.22], [8, 0.1]].forEach(([k, a]) => { im[k] = a; });
+      [[2, 2], [2, 0.75], [3, 0.5], [4, 0.4], [5, 0.1], [6, 0.22], [8, 0.1]].forEach(([k, a]) => { im[k] = a; });
       organWave = ctx.createPeriodicWave(re, im);
       /* rotary-speaker feel: slow vibrato on pitch and a little tremolo on level */
       const lfo = ctx.createOscillator(); lfo.frequency.value = 3.6;
