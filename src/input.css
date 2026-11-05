@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --color-paper: #f3e9fb;
+  --color-ink: #3d1860;
+  --color-dim: #6d4d86;
+  --color-line: #e4d4f2;
+  --color-soil: #2a0f45;
+  --color-muted: rgb(61 24 96 / 0.7);
+}
+
+/* The plot reads these exact names, and --bg must stay a hex colour. */
+:root {
+  --bg: #f3e9fb;
+  --ink: #3d1860;
+  --dim: #6d4d86;
+  --line-strong: #3d1860;
+  color-scheme: light;
+}
+
+#trail {
+  transition: opacity 0.6s;
+}
+#stage.idle #trail {
+  opacity: 0.28;
+}
+#begin {
+  transition: opacity 0.5s, visibility 0s;
+}
+#stage:not(.idle) #begin {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.5s, visibility 0s 0.5s;
+}

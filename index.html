@@ -1,134 +1,48 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="icon" href="favicon.png" type="image/png"></head><body>
-<title>Colour Mapper</title>
+<!doctype html>
+<html class="h-full scroll-pt-[env(safe-area-inset-top,0px)]">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>heaven is here</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="favicon.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap">
-<style>
-/* Layout: one full-height instrument. Warm paper, a Xanh Mono title, and small tracked labels, in the manner of an editorial studio site. The polar plot stays the only strong drawing. */
-:root {
-  --bg: #fffcf7;
-  --ink: #212121;
-  --dim: #6e6e6e;
-  --faint: #d8d2c8;
-  --line: #e6e1d8;
-  --line-strong: #212121;
-  --panel: #f6f1e8;
-  --display: "Inter", system-ui, sans-serif;
-  --sans: "Inter", system-ui, sans-serif;
-  color-scheme: light;
-}
-* { box-sizing: border-box; }
-html, body { height: 100%; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font: 15px/1.35 var(--display);
-  letter-spacing: -0.03em;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding-block: 22px;
-  padding-left: max(22px, env(safe-area-inset-left, 0px));
-  padding-right: max(22px, env(safe-area-inset-right, 0px));
-}
-.bar { display: flex; align-items: center; justify-content: space-between; gap: 16px 28px; flex-wrap: wrap; }
-h1 { margin: 0; font: 400 11px/1 var(--sans); letter-spacing: 0.04em; text-wrap: balance; }
-.tools { display: flex; gap: 8px 22px; flex-wrap: wrap; align-items: center; }
-.btn {
-  font: 400 11px/1 var(--sans);
-  letter-spacing: 0.04em;
-  color: var(--ink);
-  background: none;
-  border: 0;
-  padding: 4px 0;
-  cursor: pointer;
-}
-.btn::before { content: "/ "; }
-.btn:hover { color: #362a10; }
-.btn:focus-visible, .btn:focus-within { outline: 2px solid var(--ink); outline-offset: 3px; }
-.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="m-0 flex h-full flex-col gap-[18px] bg-paper py-[22px] pl-[max(22px,env(safe-area-inset-left,0px))] pr-[max(22px,env(safe-area-inset-right,0px))] font-sans text-[15px] leading-[1.35] tracking-[-0.03em] text-ink max-[700px]:gap-3 max-[700px]:py-3.5">
 
-.stage { position: relative; flex: 1; min-height: 0; touch-action: none; }
-#trail, #ui { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-#trail { transition: opacity 0.6s; }
-.idle #trail { opacity: 0.28; }
-
-.thumb {
-  position: absolute; right: 0; bottom: 8px;
-  display: grid; gap: 6px; justify-items: end;
-  font: 400 11px/1 var(--sans);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: rgba(43, 43, 43, 0.7);
-  pointer-events: none;
-}
-.thumb canvas { width: 120px; height: 90px; border: 1px solid var(--line); display: block; }
-
-.begin {
-  position: absolute; inset: 0;
-  display: grid; place-content: center; gap: 14px; text-align: center;
-  background: none; border: 0; color: var(--ink); cursor: pointer; padding: 20px;
-  transition: opacity 0.5s, visibility 0s;
-}
-.begin span { font: 400 clamp(22px, 4vw, 36px)/1.15 var(--display); letter-spacing: -0.04em; text-wrap: balance; }
-.begin small { font: 400 16px/1.35 var(--display); letter-spacing: -0.03em; color: var(--ink); max-width: 34ch; margin-inline: auto; }
-.begin:focus-visible { outline: 2px solid var(--ink); outline-offset: -6px; }
-.stage:not(.idle) .begin { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.5s, visibility 0s 0.5s; }
-
-.read { display: flex; flex-wrap: wrap; gap: 14px 32px; align-items: end; justify-content: space-between; }
-.read dl { display: flex; flex-wrap: wrap; gap: 10px 32px; margin: 0; min-width: 0; }
-.read dl div { display: grid; gap: 6px; min-width: 0; }
-dt { font: 400 11px/1 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: rgba(43, 43, 43, 0.7); }
-dd { margin: 0; font: 400 11px/1.2 var(--display); letter-spacing: -0.03em; min-width: 5ch; }
-dd.wide { min-width: 14ch; }
-.swatch { display: inline-block; width: 0.65em; height: 0.65em; border-radius: 50%; margin-right: 7px; background: var(--sw, transparent); vertical-align: -0.05em; }
-.trailctl { display: flex; align-items: center; gap: 10px; color: rgba(43, 43, 43, 0.7); font: 400 11px/1 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; }
-input[type="range"] { accent-color: var(--ink); width: 110px; }
-#note { margin: 0; color: var(--dim); min-height: 1.35em; font: 400 15px/1.35 var(--display); letter-spacing: -0.03em; }
-
-@media (max-width: 700px) {
-  body { gap: 12px; padding-block: 14px; }
-  .thumb canvas { width: 84px; height: 63px; }
-  .begin { gap: 8px; }
-  .begin span { font-size: 18px; }
-  .begin small { font-size: 13px; }
-  dd.wide { min-width: 12ch; }
-  #note { font-size: 13px; }
-}
-</style>
-
-<header class="bar">
-  <h1>heaven is here</h1>
-  <div class="tools" id="tools">
-    <label class="btn" for="file">Photo or video<input class="sr" id="file" type="file" accept="image/*,video/*"></label>
-    <button class="btn" id="scene" type="button" hidden>Built-in scene</button>
-    <button class="btn" id="sound" type="button" aria-pressed="true">Sound on</button>
-    <button class="btn" id="pause" type="button" hidden>Pause</button>
+<header class="flex flex-wrap items-center justify-between gap-x-7 gap-y-4">
+  <h1 class="m-0 text-balance font-sans text-[11px] font-normal leading-none tracking-[0.04em]">heaven is here</h1>
+  <div class="flex flex-wrap items-center gap-x-[22px] gap-y-2" id="tools">
+    <label class="cursor-pointer border-0 bg-transparent py-1 font-sans text-[11px] font-normal leading-none tracking-[0.04em] text-ink before:mr-1 before:content-['/'] hover:text-soil focus-within:outline focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-ink" for="file">Photo or video<input class="sr-only" id="file" type="file" accept="image/*,video/*"></label>
+    <button class="cursor-pointer border-0 bg-transparent py-1 font-sans text-[11px] font-normal leading-none tracking-[0.04em] text-ink before:mr-1 before:content-['/'] hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-ink" id="scene" type="button" hidden>Built-in scene</button>
+    <button class="cursor-pointer border-0 bg-transparent py-1 font-sans text-[11px] font-normal leading-none tracking-[0.04em] text-ink before:mr-1 before:content-['/'] hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-ink" id="sound" type="button" aria-pressed="true">Sound on</button>
+    <button class="cursor-pointer border-0 bg-transparent py-1 font-sans text-[11px] font-normal leading-none tracking-[0.04em] text-ink before:mr-1 before:content-['/'] hover:text-soil focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-ink" id="pause" type="button" hidden>Pause</button>
   </div>
 </header>
 
-<main class="stage idle" id="stage">
-  <canvas id="trail"></canvas>
-  <canvas id="ui"></canvas>
-  <div class="thumb"><canvas id="src" width="96" height="72"></canvas><span>Source</span></div>
-  <button class="begin" id="begin" type="button">
-    <span>Click anywhere to begin</span>
-    <small>take a breath. drag the dot around and create your heaven. audio reacting to visual. mind reacting to the sound. that's all for now</small>
+<main class="relative min-h-0 flex-1 touch-none idle" id="stage">
+  <canvas class="absolute inset-0 block h-full w-full bg-paper" id="trail"></canvas>
+  <canvas class="absolute inset-0 block h-full w-full" id="ui"></canvas>
+  <div class="pointer-events-none absolute right-0 bottom-2 grid justify-items-end gap-1.5 font-sans text-[11px] leading-none font-normal tracking-[0.04em] text-muted uppercase"><canvas class="block h-[90px] w-[120px] border border-line bg-paper max-[700px]:h-[63px] max-[700px]:w-[84px]" id="src" width="96" height="72"></canvas><span>Source</span></div>
+  <button class="absolute inset-0 grid cursor-pointer place-content-center gap-3.5 border-0 bg-transparent p-5 text-center text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-6px] focus-visible:outline-ink max-[700px]:gap-2" id="begin" type="button">
+    <span class="text-balance font-sans text-[clamp(18px,4vw,30px)] leading-[1.15] font-normal tracking-[-0.04em] max-[700px]:text-[10px]">Click anywhere to begin</span>
+    <small class="mx-auto max-w-[34ch] font-sans text-[16px] leading-[1.35] font-normal tracking-[-0.03em] text-ink max-[700px]:text-[13px]">take a breath. drag the dot around and create your heaven. audio reacting to visual. mind reacting to the sound. that's all for now</small>
   </button>
 </main>
 
-<footer class="read">
-  <dl>
-    <div><dt>Dominant hue</dt><dd class="wide"><span class="swatch" id="sw"></span><span id="hueTxt">–</span></dd></div>
-    <div><dt>Mean chroma</dt><dd id="chromaTxt">–</dd></div>
-    <div><dt>Mean lightness</dt><dd id="lightTxt">–</dd></div>
-    <div><dt>Samples</dt><dd id="nTxt">–</dd></div>
+<footer class="flex flex-wrap items-end justify-between gap-x-8 gap-y-3.5">
+  <dl class="m-0 flex min-w-0 flex-wrap gap-x-8 gap-y-2.5">
+    <div class="grid min-w-0 gap-1.5"><dt class="font-sans text-[11px] leading-none font-normal tracking-[0.04em] text-muted uppercase">Dominant hue</dt><dd class="m-0 min-w-[14ch] font-sans text-[11px] leading-[1.2] font-normal tracking-[-0.03em] max-[700px]:min-w-[12ch]"><span class="mr-[7px] inline-block size-[0.65em] align-[-0.05em] rounded-full bg-[var(--sw,transparent)]" id="sw"></span><span id="hueTxt">–</span></dd></div>
+    <div class="grid min-w-0 gap-1.5"><dt class="font-sans text-[11px] leading-none font-normal tracking-[0.04em] text-muted uppercase">Mean chroma</dt><dd class="m-0 min-w-[5ch] font-sans text-[11px] leading-[1.2] font-normal tracking-[-0.03em]" id="chromaTxt">–</dd></div>
+    <div class="grid min-w-0 gap-1.5"><dt class="font-sans text-[11px] leading-none font-normal tracking-[0.04em] text-muted uppercase">Mean lightness</dt><dd class="m-0 min-w-[5ch] font-sans text-[11px] leading-[1.2] font-normal tracking-[-0.03em]" id="lightTxt">–</dd></div>
+    <div class="grid min-w-0 gap-1.5"><dt class="font-sans text-[11px] leading-none font-normal tracking-[0.04em] text-muted uppercase">Samples</dt><dd class="m-0 min-w-[5ch] font-sans text-[11px] leading-[1.2] font-normal tracking-[-0.03em]" id="nTxt">–</dd></div>
   </dl>
-  <label class="trailctl">Exaggerate <input id="boost" type="range" min="0" max="100" value="70" aria-label="Exaggerate colour"></label>
-  <label class="trailctl">Trails <input id="trails" type="range" min="0" max="100" value="62" aria-label="Trail length"></label>
-  <p id="note" role="status"></p>
+  <label class="flex items-center gap-2.5 font-sans text-[11px] leading-none font-normal tracking-[0.04em] text-muted">Exaggerate <input class="w-[110px] accent-ink" id="boost" type="range" min="0" max="100" value="70" aria-label="Exaggerate colour"></label>
+  <label class="flex items-center gap-2.5 font-sans text-[11px] leading-none font-normal tracking-[0.04em] text-muted ">Trails <input class="w-[110px] accent-ink" id="trails" type="range" min="0" max="100" value="62" aria-label="Trail length"></label>
+  <p class="m-0 min-h-[1.35em] font-sans text-[15px] leading-[1.35] font-normal tracking-[-0.03em] text-dim max-[700px]:text-[13px]" id="note" role="status"></p>
 </footer>
 
 <script>
@@ -153,7 +67,7 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
   const ang = (h) => ((h - 90) * Math.PI) / 180;
 
   let W = 1, H = 1, dpr = 1, cx = 0, cy = 0, R = 40, ptr = null;
-  let running = false, raf = 0, last = 0, frame = 0, tScene = 0, pluckAcc = 0, nextPluck = 0.6;
+  let running = false, raf = 0, last = 0, frame = 0, tScene = 0, pluckAcc = 0, nextPluck = 2;
   let src = { kind: 'scene', el: null };
   let objUrl = null;
   let stats = { sx: 0, sy: 0, c: 0, l: 0, n: 0 };
@@ -161,27 +75,23 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
 
   /* ---------- built-in scene: drifting colour blobs ---------- */
   const BLOBS = [
-    { fx: 0.31, fy: 0.23, px: 0.0, py: 1.2, fr: 0.5, pr: 0.3, h: 8, hs: 9, s: 90, l: 52, r: 0.34 },
-    { fx: 0.22, fy: 0.37, px: 1.7, py: 0.4, fr: 0.4, pr: 2.1, h: 48, hs: -7, s: 95, l: 55, r: 0.30 },
-    { fx: 0.41, fy: 0.19, px: 3.1, py: 2.2, fr: 0.6, pr: 1.0, h: 140, hs: 6, s: 70, l: 46, r: 0.32 },
-    { fx: 0.27, fy: 0.43, px: 4.4, py: 3.6, fr: 0.3, pr: 0.7, h: 200, hs: 11, s: 85, l: 50, r: 0.36 },
-    { fx: 0.36, fy: 0.29, px: 5.2, py: 0.9, fr: 0.55, pr: 2.8, h: 262, hs: -9, s: 80, l: 54, r: 0.30 },
-    { fx: 0.19, fy: 0.33, px: 2.4, py: 4.1, fr: 0.45, pr: 1.6, h: 318, hs: 8, s: 88, l: 56, r: 0.28 },
-    { fx: 0.29, fy: 0.26, px: 0.8, py: 2.9, fr: 0.35, pr: 3.3, h: 0, hs: 0, s: 0, l: 88, r: 0.22 }
+    { fx: 0.31, fy: 0.23, px: 0.0, py: 1.2, fr: 0.5, pr: 0.3, h: 262, s: 62, l: 58, r: 0.34 },
+    { fx: 0.22, fy: 0.37, px: 1.7, py: 0.4, fr: 0.4, pr: 2.1, h: 278, s: 55, l: 64, r: 0.30 },
+    { fx: 0.41, fy: 0.19, px: 3.1, py: 2.2, fr: 0.6, pr: 1.0, h: 292, s: 48, l: 52, r: 0.32 },
+    { fx: 0.27, fy: 0.43, px: 4.4, py: 3.6, fr: 0.3, pr: 0.7, h: 308, s: 58, l: 60, r: 0.36 },
+    { fx: 0.36, fy: 0.29, px: 5.2, py: 0.9, fr: 0.55, pr: 2.8, h: 320, s: 50, l: 66, r: 0.30 },
+    { fx: 0.19, fy: 0.33, px: 2.4, py: 4.1, fr: 0.45, pr: 1.6, h: 286, s: 42, l: 70, r: 0.28 },
+    { fx: 0.29, fy: 0.26, px: 0.8, py: 2.9, fr: 0.35, pr: 3.3, h: 274, s: 28, l: 82, r: 0.22 }
   ];
   function drawScene(g, w, h, t) {
-    const b = (t * 5) % 360;
-    const bg = g.createLinearGradient(0, 0, w, h);
-    bg.addColorStop(0, `hsl(${b} 40% 16%)`);
-    bg.addColorStop(1, `hsl(${(b + 120) % 360} 36% 8%)`);
     g.globalCompositeOperation = 'source-over';
-    g.fillStyle = bg;
+    g.fillStyle = BG;
     g.fillRect(0, 0, w, h);
     for (const o of BLOBS) {
       const x = w * (0.5 + 0.36 * Math.sin(t * o.fx + o.px));
       const y = h * (0.5 + 0.34 * Math.cos(t * o.fy + o.py));
       const r = h * (o.r + 0.08 * Math.sin(t * o.fr + o.pr));
-      const hue = (((o.h + t * o.hs) % 360) + 360) % 360;
+      const hue = (o.h + Math.sin(t * 0.35 + o.px) * 16 + 360) % 360;
       const gr = g.createRadialGradient(x, y, 0, x, y, r);
       gr.addColorStop(0, `hsla(${hue},${o.s}%,${o.l}%,0.95)`);
       gr.addColorStop(0.6, `hsla(${hue},${o.s}%,${o.l - 10}%,0.45)`);
@@ -222,8 +132,8 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
     const rho0 = Math.hypot(avx, avy);
     const spreadF = 1 + a * 3 * rho0 * rho0;
     const mh0 = (Math.atan2(avy, avx) * 180) / Math.PI;
-    tctx.globalCompositeOperation = 'multiply';
-    tctx.globalAlpha = 0.85;
+    tctx.globalCompositeOperation = 'source-over';
+    tctx.globalAlpha = 0.14;
     const sz = Math.max(1.8, R * 0.014);
     const n = data.length / 4;
     let sx = 0, sy = 0, sc = 0, sl = 0, st = 0, ce = 0, m = 0, cpk = 0;
@@ -252,7 +162,7 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
       ce += c2;
       PH[m] = h2; PC[m] = c2; PL[m] = lum; m++;
       const ap = ang(h2), rad = c2 * R;
-      tctx.fillStyle = `hsl(${h2 | 0} ${(45 + 25 * c2) | 0}% ${(82 - 8 * c2) | 0}%)`;
+      tctx.fillStyle = `hsl(${h2 | 0} ${(42 + 18 * c2) | 0}% ${(76 - 8 * c2) | 0}%)`;
       tctx.fillRect(cx + Math.cos(ap) * rad - sz / 2, cy + Math.sin(ap) * rad - sz / 2, sz, sz);
     }
     avx += ((st > 0 ? sx / st : 0) - avx) * 0.1;
@@ -344,15 +254,12 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
     pluckAcc += dt;
     while (pluckAcc > nextPluck) {
       pluckAcc -= nextPluck;
-      nextPluck = 0.5 + Math.random() * 0.7;
+      nextPluck = 2 + Math.random() * 2;
       const q = stats;
-      if (q.m > 0) {
-        let i = (Math.random() * q.m) | 0;
-        for (let k = 0; k < 2; k++) {
-          const j = (Math.random() * q.m) | 0;
-          if (q.pc[j] > q.pc[i]) i = j;
-        }
-        audio.pluck(q.ph[i], q.pc[i], q.pl[i]);
+      if (q.sec) {
+        let sector = 0;
+        for (let i = 1; i < 12; i++) if (q.sec[i] > q.sec[sector]) sector = i;
+        if (q.sec[sector] > 0) audio.pluck(sector * 30, q.sec[sector] / (q.st || 1), q.l);
       }
     }
     if (++frame % 6 === 0) readout();
@@ -391,16 +298,15 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
 
   /* ---------- sound ---------- */
   /* Twelve quiet voices, one per 30 degree sector of the hue wheel, tuned to a major pentatonic so any mix stays consonant.
-     Each voice is doubled an octave lower and again an octave below that. Each voice is as loud as the share of the (exaggerated) chroma in its sector; lightness opens a low-pass filter.
-     Short plucks are fired from random dots, pitched by hue and register by lightness, with two octaves under the root. Darker dots use the lower register.
-     A lead voice plays the hue under the pointer, with two octaves below it. Everything runs through a soft-clip overdrive and a convolution reverb. */
+     Each voice has one quieter octave below it. Each voice is as loud as the share of the (exaggerated) chroma in its sector; lightness opens a low-pass filter.
+     Every few seconds a single note, with a quiet octave, sounds on the loudest sector. Darker pictures use the lower register.
+     A lead voice plays the hue under the pointer, with two octaves below it. Everything runs through a soft clip and a short reverb. */
   const audio = (() => {
     const PENT = [0, 2, 4, 7, 9];
     const note = (i, base) => base * Math.pow(2, (Math.floor(i / 5) * 12 + PENT[i % 5]) / 12);
     let ctx = null, comp = null, master = null, bus = null, lp = null, pv = null, pvLow = null, pvSub = null, pg = null, pf = null, organWave = null, lfoDepth = null;
     const voices = [];
     const lows = [];
-    const subs = [];
     const accW = new Float32Array(12);
     const coarse = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
     let accN = 0, accL = 0, accE = 0, lastChord = -99;
@@ -447,13 +353,13 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
       hp.type = 'highpass'; hp.frequency.value = 70; hp.Q.value = 0.7;
       hp.connect(comp); comp.connect(ctx.destination);
       master = ctx.createGain(); master.gain.value = 0; master.connect(hp);
-      /* organ spectrum: drawbar-style harmonics 1, 2, 3, 4, 5, 6, 8 */
+      /* organ spectrum: fundamental plus a few quiet harmonics, so the written pitch is the heard pitch */
       const re = new Float32Array(9), im = new Float32Array(9);
-      [[2, 2], [2, 0.75], [3, 0.5], [4, 0.4], [5, 0.1], [6, 0.22], [8, 0.1]].forEach(([k, a]) => { im[k] = a; });
+      [[1, 1], [2, 0.45], [3, 0.2], [4, 0.08]].forEach(([k, a]) => { im[k] = a; });
       organWave = ctx.createPeriodicWave(re, im);
-      /* rotary-speaker feel: slow vibrato on pitch and a little tremolo on level */
+      /* a small vibrato on the upper voices only */
       const lfo = ctx.createOscillator(); lfo.frequency.value = 3.6;
-      lfoDepth = ctx.createGain(); lfoDepth.gain.value = 6;
+      lfoDepth = ctx.createGain(); lfoDepth.gain.value = 2;
       const lfoAm = ctx.createGain(); lfoAm.gain.value = 0.07;
       const trem = ctx.createGain(); trem.gain.value = 0.93;
       lfo.connect(lfoDepth); lfo.connect(lfoAm); lfoAm.connect(trem.gain); lfo.start();
@@ -465,23 +371,20 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
       const dry = ctx.createGain(); dry.gain.value = 0.75; post.connect(dry); dry.connect(master);
       const conv = ctx.createConvolver(); conv.buffer = impulse(ctx, 2.8, 2.6);
       const wlp = ctx.createBiquadFilter(); wlp.type = 'lowpass'; wlp.frequency.value = 3200;
-      const wet = ctx.createGain(); wet.gain.value = 5.7;
+      const wet = ctx.createGain(); wet.gain.value = 1.5;
       post.connect(conv); conv.connect(wlp); wlp.connect(wet); wet.connect(master);
       lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 1500; lp.Q.value = 0.4; lp.connect(bus);
       for (let i = 0; i < 12; i++) {
         const o = ctx.createOscillator(); o.setPeriodicWave(organWave); o.frequency.value = note(i, 261.63); lfoDepth.connect(o.detune);
         const g = ctx.createGain(); g.gain.value = 0;
         o.connect(g); g.connect(lp); o.start(); voices.push(g);
-        const lo = ctx.createOscillator(); lo.setPeriodicWave(organWave); lo.frequency.value = note(i, 130.81); lfoDepth.connect(lo.detune);
+        const lo = ctx.createOscillator(); lo.setPeriodicWave(organWave); lo.frequency.value = note(i, 130.81);
         const lg = ctx.createGain(); lg.gain.value = 0;
         lo.connect(lg); lg.connect(lp); lo.start(); lows.push(lg);
-        const su = ctx.createOscillator(); su.setPeriodicWave(organWave); su.frequency.value = note(i, 65.41); lfoDepth.connect(su.detune);
-        const sg = ctx.createGain(); sg.gain.value = 0;
-        su.connect(sg); sg.connect(lp); su.start(); subs.push(sg);
       }
       pv = ctx.createOscillator(); pv.setPeriodicWave(organWave); pv.frequency.value = 123.25; lfoDepth.connect(pv.detune);
-      pvLow = ctx.createOscillator(); pvLow.setPeriodicWave(organWave); pvLow.frequency.value = 61.625; lfoDepth.connect(pvLow.detune);
-      pvSub = ctx.createOscillator(); pvSub.setPeriodicWave(organWave); pvSub.frequency.value = 30.813; lfoDepth.connect(pvSub.detune);
+      pvLow = ctx.createOscillator(); pvLow.setPeriodicWave(organWave); pvLow.frequency.value = 61.625;
+      pvSub = ctx.createOscillator(); pvSub.setPeriodicWave(organWave); pvSub.frequency.value = 30.813;
       const pvLowG = ctx.createGain(); pvLowG.gain.value = 0.85;
       const pvSubG = ctx.createGain(); pvSubG.gain.value = 0.6;
       pf = ctx.createBiquadFilter(); pf.type = 'lowpass'; pf.frequency.value = 1200;
@@ -524,8 +427,7 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
         for (let i = 0; i < 12; i++) {
           const level = Math.min(0.5, Math.sqrt(accW[i] / accN) * 0.14 * loud);
           voices[i].gain.setTargetAtTime(level, t, glide);
-          lows[i].gain.setTargetAtTime(level * 0.9, t, glide);
-          subs[i].gain.setTargetAtTime(level * 0.6, t, glide);
+          lows[i].gain.setTargetAtTime(level * 0.4, t, glide);
           accW[i] = 0;
         }
         lp.frequency.setTargetAtTime(500 + (accL / accN) * 4500, t, 1.4);
@@ -534,9 +436,9 @@ input[type="range"] { accent-color: var(--ink); width: 110px; }
       pluck(h, c, l) {
         if (!ctx || !on || !active) return;
         const t = ctx.currentTime;
-        const root = note(Math.min(9, Math.floor(h / 36)), l < 0.72 ? 130.81 : 261.63);
-        /* a held organ chord per dot: two lower octaves, root, fifth, octave and a quiet octave-plus-fifth */
-        const stack = [[0.25, 0.6], [0.5, 0.85], [1, 1], [1.5, 0.55], [2, 0.5], [3, 0.18 + 0.12 * c]];
+        const root = note(Math.round(h / 30) % 12, l < 0.72 ? 130.81 : 261.63);
+        /* one note plus a quiet octave, on the same scale degree as the pad */
+        const stack = [[1, 1], [2, 0.3]];
         const hold = 1.2 + Math.random() * 1.2, rel = 0.45;
         const fl = ctx.createBiquadFilter(), g = ctx.createGain();
         fl.type = 'lowpass'; fl.frequency.value = 2400 + c * 3200; fl.Q.value = 0.5;
